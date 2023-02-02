@@ -1,6 +1,6 @@
 ## 엔티티 매핑  
 객체와 테이블 매핑    
-- 객체와 테이블 매핑: @Entity, @Table   
+- 객체와 테이블 매핑: <b>@Entity, @Table</b>   
     - @Entity: @Entity가 붙은 클래스는 jpa가 관리하는 엔티티라고 한다. 
     - jpa를 사용해서 테이블과 매핑할 클래스는 @Entity 필수.    
     - 기본 생성자 필수(public 또는 protected)  
@@ -40,8 +40,8 @@ public class ExEntity{
 }
 ```
 - 기본 키 매핑     
-    - @Id   
-    - @GeneratedValue: 기본키 생성을 데이터베이스에 위임.   
+    - <b>@Id</b>   
+    - <b>@GeneratedValue: 기본키 생성을 데이터베이스에 위임.</b>   
         - Identity: 데이터베이스에 위임. Mysql     
         - Sequence: 데이터베이스 시퀀스 오브젝트 사용. Oracle      
             @SequenceGenerator 필요.    
