@@ -88,7 +88,8 @@ public class Team{
 
     - <b>누구를 주인으로?</b>      
         외래키가 있는 곳을 주인으로 지정해라.( 무조건 적인 강요는 아니지만 외래키가 있는곳을 주인으로 지정해야 개발하기 수월하다.)      
-        ex) 외래키가 없는 곳(여기선 Team)을 주인으로 지정했을때, Team의 members를 수정했을 때 Team관련 sql이 생성되는게 아닌 member와 관련된 sql이 생성된다.    
+        ex) 외래키가 없는 곳(여기선 Team)을 주인으로 지정했을때.    
+        Team의 members를 수정했을 때 Team관련 sql이 생성되는게 아닌 member와 관련된 sql이 생성된다.    
 
     - 연관관계 주의     
         1. 항상 양쪽에 값을 설정하자.( member.team = xxx, team.members().add(xxx) )     
