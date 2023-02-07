@@ -63,7 +63,7 @@ public class Team{
 
     private String name;
 
-    @OneToMany( mappedBy = "team")// Team 입장에서 Member는 1:M 관계
+    @OneToMany( mappedBy = "team")// Team 입장에서 Member는 1:N 관계
                                   // mappedBy = "xxx" 연관관계인 객체의 변수명 
     private List<Member> members = new ArrayList<>();
 }
