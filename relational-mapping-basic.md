@@ -19,7 +19,9 @@ public class Member{
     private String name;
 
     @ManyToOne // Member 입장에서 Team은 N:1 관계
-    @JoinColumn(name = "TEAM_ID") // Member 테이블의 join 컬럼의 컬럼명
+    @JoinColumn(name = "TEAM_ID") // name 속성: Member 테이블의 join 컬럼의 컬럼명     
+                                  // referencedColumnName = xxx: 연관관계를 맺을 테이블의 컬럼을 지정가능     
+                                  // 생략하면 자동으로 pk값으로 연관관계를 맺음
     private Team team;
 }
 
