@@ -83,17 +83,78 @@
 - 일대다(1:N) 양방향 연관관계   
     - 이런 매핑은 공식적으로 존재하지않음.
     - 다대일 양방향 연관관계를 사용하자.      
-- 일대일(1:1) 양방향 연관관계
-    - 주 테이블에 외래키        
-        ![11_1](https://user-images.githubusercontent.com/59528611/218453365-2dc8d958-ea09-48a9-90f2-ca4bcece7da0.jpeg)     
-        - 주 객체가 대상 객체의 참조를 가지는 것 처럼 주 테이블에 외래키를 두고 대상 테이블을 찾음.     
-        - 주 테이블만 조회해도 대상 테이블에 데이터가 있는지 확인 가능.     
-        - 값이 없으면 외래 키에 null 허용
-    - 대상 테이블에 외래키            
-        ![11_2](https://user-images.githubusercontent.com/59528611/218453488-1e4655ab-245f-43a1-a89a-8d3427a3e33b.jpeg)     
-            - 대상 테이블에 외래키가 존재       
-            - 주 테이블과 대상 테이블을 일대일에서 일대다 관계로 변경할 때 테이블 구조 유지 가능        
-            - 프록시 기능의 한계로 지연 로딩으로 설정해도 항상 즉시 로딩됨.     
+
+- 일대일(1:1) 양방향 연관관계       
+    - 주 테이블이나 대상 테이블 중에 외래키 선택 가능
+        - 주 테이블에 외래키        
+            ![11_1](https://user-images.githubusercontent.com/59528611/218453365-2dc8d958-ea09-48a9-90f2-ca4bcece7da0.jpeg)     
+            ```java
+            @Entity
+            public class Member{
+                @Id @GeneratedValue
+                @Column(name = "MEMBER_ID")
+                private Long id;
+
+                @Column(name = "USERNAME")
+                private String username;
+
+                @OneToOne
+                @JoinColumn(name = "LOCKER_ID")
+                private Locker locker;
+            }
+
+            @Entity
+            public class Locker{
+                @Id @GeneratedValue
+                @Column(name = "LOCKER_ID")
+                private Long id;
+
+                @Column(name = "LOCKERNAME")
+                private String username;		
+
+                @OneToOne(mappedBy = "locker")
+                private Member member;
+            }
+            ```     
+            - 외래키가 있는 곳이 연관관계 주인. 반대편은 mappedBy 사용.
+            - 주 객체가 대상 객체의 참조를 가지는 것 처럼 주 테이블에 외래키를 두고 대상 테이블을 찾음.     
+            - 주 테이블만 조회해도 대상 테이블에 데이터가 있는지 확인 가능.     
+            - 값이 없으면 외래 키에 null 허용
+        - 대상 테이블에 외래키            
+            ![11_2](https://user-images.githubusercontent.com/59528611/218453488-1e4655ab-245f-43a1-a89a-8d3427a3e33b.jpeg)     
+            ```java
+            @Entity
+            public class Member{
+                @Id @GeneratedValue
+                @Column(name = "MEMBER_ID")
+                private Long id;
+
+                @Column(name = "USERNAME")
+                private String username;
+
+                @OneToOne(mappedBy = "member")
+                private Locker locker;
+            }
+
+            @Entity
+            public class Locker{
+                @Id @GeneratedValue
+                @Column(name = "LOCKER_ID")
+                private Long id;
+
+                @Column(name = "LOCKERNAME")
+                private String username;		
+
+                @OneToOne
+                @JoinColumn(name = "MEMBER_ID")
+                private Member member;
+            }
+            ```
+            > 주 테이블에 외래키가 있는 상황에서 연관관계 주인만 바꾸면 됨.     
+
+                - 대상 테이블에 외래키가 존재       
+                - 주 테이블과 대상 테이블을 일대일에서 일대다 관계로 변경할 때 테이블 구조 유지 가능        
+                - <b>프록시 기능의 한계로 지연 로딩으로 설정해도 항상 즉시 로딩됨</b>.     
 - 다대다(N:M) 양방향 연관관계        
     - 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없음.     
     - 연결 테이블을 추가해서 일대다, 다대일 관계로 풀어야됨.        
