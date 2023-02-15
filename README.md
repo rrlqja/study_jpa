@@ -3,5 +3,5 @@
 - [엔티티 매핑](https://github.com/rrlqja/study_jpa/blob/master/entity-mapping.md)   
 - [연관관계 매핑 기초](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-basic.md)    
 - [다양한 연관관계 매핑](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping.md)
-- 연관관계 매핑 고급    
+- [연관관계 매핑 고급](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-advanced.md)    
 - 프록시    
