@@ -28,5 +28,5 @@ main(){
 
 프록시 확인     
     - 프록시 인스턴스 초기화 여부 확인: PersistenceUnitUtill.isLoaded(entity)       
-    - 프록시 클래스 확인: entity.getClass()
+    - 프록시 클래스 확인: entity.getClass()     
     - 프록시 강제 초기화: Hibernate.initialize(entity)      
