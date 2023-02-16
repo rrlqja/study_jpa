@@ -27,6 +27,20 @@ main(){
     - <b>준영속 상태일 때 프록시를 초기화하면 문제 발생( LazyInitializationException 발생 )</b>       
 
 프록시 확인     
-    - 프록시 인스턴스 초기화 여부 확인: PersistenceUnitUtill.isLoaded(entity)       
-    - 프록시 클래스 확인: entity.getClass()     
-    - 프록시 강제 초기화: Hibernate.initialize(entity)      
+```java     
+main(){
+    Member findMember = entityManager.find(Member.class, member.getId());
+    System.out.println("findMember = " + findMember.getClass());
+    // findMember = class ...Member
+}
+```     
+```java     
+main(){
+    Member findMember = entityManager.getReferenece(Member.class, member.getId());
+    System.out.println("findMember = " + findMember.getClass());
+    // findMember = class ...Member$HibernateProxy$xxxx
+}
+```     
+- 프록시 인스턴스 초기화 여부 확인: PersistenceUnitUtill.isLoaded(entity)       
+- 프록시 클래스 확인: entity.getClass()     
+- 프록시 강제 초기화: Hibernate.initialize(entity)      
