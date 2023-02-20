@@ -45,7 +45,6 @@ main(){
 - 프록시 클래스 확인: entity.getClass()     
 - 프록시 강제 초기화: Hibernate.initialize(entity)      
 
----
 ## 즉시 로딩과 지연 로딩    
 Member와 Member의 Team을 동시에 조회해와야 할까?    
 - 지연로딩     
