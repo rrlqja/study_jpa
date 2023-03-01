@@ -65,7 +65,7 @@
     - <b> 조인 전략과 단일 테이블 전략 둘 중 고민해서 사용하자</b>       
 
 - MappedSuperClass      
-공통 매핑 정보가 필요할 떄 사용
+공통 매핑 정보가 필요할 때 사용
 ```java     
     @MappedSuperclass
 	public abstract class BaseEntity{

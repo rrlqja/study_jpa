@@ -1,10 +1,23 @@
 ### [jpa](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)     
 - [영속성 컨텍스트(Persistence Context)](#영속성-컨텍스트-persistence-context) - [링크](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)       
+    - 엔티티의 생명주기     
+    - 영속성 컨텍스트의 이점        
+    - 플러시 (flush)     
+    - 준영속 상태       
 - [엔티티 매핑](#엔티티-매핑) - [링크](https://github.com/rrlqja/study_jpa/blob/master/entity-mapping.md)   
 - [연관관계 매핑 기초](#연관관계-매핑-기초) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-basic.md)    
-- [다양한 연관관계 매핑](#다양한-연관관계-매핑) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping.md)
+    - 단방향 연관관계       
+    - 양방향 연관관계
+    - 양방향 연관관계 정리
+- [다양한 연관관계 매핑](#다양한-연관관계-매핑) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping.md)     
 - [연관관계 매핑 고급](#상속관계) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-advanced.md)    
+    - 상속관계      
 - [프록시](#프록시) - [링크](https://github.com/rrlqja/study_jpa/blob/master/proxy.md)    
+    - 프록시    
+    - 즉시 로딩과 지연 로딩     
+    - 영속성 전이   
+    - 고아 객체     
+    - 영속성 전이 + 고아 객체 - 생명주기
 
 ___     
 ## 영속성 컨텍스트 (Persistence Context)    
@@ -507,7 +520,7 @@ ___
     - <b> 조인 전략과 단일 테이블 전략 둘 중 고민해서 사용하자</b>       
 
 - MappedSuperClass      
-공통 매핑 정보가 필요할 떄 사용
+공통 매핑 정보가 필요할 때 사용
 ```java     
     @MappedSuperclass
 	public abstract class BaseEntity{
