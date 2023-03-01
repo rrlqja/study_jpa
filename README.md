@@ -1,12 +1,10 @@
 ### [jpa](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)     
-- [영속성 컨텍스트(Persistence Context)](#영속성-컨텍스트-persistence-context) [원문](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)       
-- [영속성 컨텍스트(Persistence Context)](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)   
-- [영속 컨](#영속성-컨텍스트-persistence-context)
-- [엔티티 매핑](https://github.com/rrlqja/study_jpa/blob/master/entity-mapping.md)   
-- [연관관계 매핑 기초](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-basic.md)    
-- [다양한 연관관계 매핑](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping.md)
-- [연관관계 매핑 고급](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-advanced.md)    
-- [프록시](https://github.com/rrlqja/study_jpa/blob/master/proxy.md)    
+- [영속성 컨텍스트(Persistence Context)](#영속성-컨텍스트-persistence-context) - [링크](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)       
+- [엔티티 매핑](#엔티티-매핑) - [링크](https://github.com/rrlqja/study_jpa/blob/master/entity-mapping.md)   
+- [연관관계 매핑 기초](#연관관계-매핑-기초) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-basic.md)    
+- [다양한 연관관계 매핑](#다양한-연관관계-매핑) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping.md)
+- [연관관계 매핑 고급](#상속관계) - [링크](https://github.com/rrlqja/study_jpa/blob/master/relational-mapping-advanced.md)    
+- [프록시](#프록시) - [링크](https://github.com/rrlqja/study_jpa/blob/master/proxy.md)    
 
 ___     
 ## 영속성 컨텍스트 (Persistence Context)    
@@ -270,3 +268,474 @@ public class Team{
 - 단방향 매핑만으로 연관관계 매핑을 완료해라    
 - 양방향 매핑은 조회(객체 그래프 탐색) 기능이 추가되는 것 뿐
 - 단방향 매핑을 잘 하고 양방향 매핑은 필요할 때 추가해라        
+
+___     
+## 다양한 연관관계 매핑     
+- 고려사항      
+    1. 다중성   
+        - 다대일(N:1): @ManyToOne           
+        - 일대다(1:N): @OneToMany        
+        - 일대일(1:1): @OneToOne        
+        - 다대다(N:M): @ManyToMany    
+        > 다중성이 헷갈릴 때는 데이터베이스 테이블의 관점에서 생각해보자
+    2. 단방향, 양방향       
+        - 테이블: 외래키 하나로 양쪽 조인 가능. 방향이라는 개념이 없음      
+        - 객체: 참조용 필드가 있는 쪽으로만 참조 가능. 한쪽만 참조하면 단방향, 양쪽이 서로 참조하면 양방향      
+    3. <b>연관관계 주인</b>        
+        테이블과 객체가 연관관계를 맺는 방법의 차이가 있음.     
+        객체는 참조가 두군데있기 때문에 둘중 테이블의 외래키를 관리할 곳을 지정해야함.      
+        - 연관관계 주인: 외래키를 관리하는 참조     
+        - 주인의 반대편: 외래키에 영향을 주지 않음. <b>조회만 가능</b>
+
+- <b>다대일(N:1) 양방향 연관관계</b>   
+    ![N1_1](https://user-images.githubusercontent.com/59528611/218443122-65126329-3355-4cdc-ba87-918ca9637708.jpeg)     
+    - 외래키가 있는 쪽이 연관관계 주인      
+    - 양쪽을 서로 참조하도록 개발
+        ```java     
+        @Entity
+        public class Member{
+            @Id @GeneratedValue
+            @Column(name = "MEMBER_ID")
+            private Long id;
+
+            @Column(name = "USERNAME")
+            private String username;
+
+            @ManyToOne
+            @JoinColumn(neme = "TEAM_ID")
+            private Team team;
+        }
+
+        @Entity
+        public class Team{
+            @Id @GeneratedValue
+            @Column(name = "TEAM_ID")
+            private Long id;
+            private String name;
+
+            @OneToMany(mappedBy = "team")
+            private List<Member> members = new ArrayList<>();	
+        }
+        ```         
+- 일대다(1:N) 단방향 연관관계        
+    ![1N_1](https://user-images.githubusercontent.com/59528611/218448668-40b0ccf5-d9ac-4d10-bea8-508d5a161d87.jpeg)     
+    - 권장하지 않는 연관관계 방식       
+    ```java
+    @Entity
+	public class Member{
+		@Id @GeneratedValue
+		@Column(name = "MEMBER_ID")
+		private Long id;
+
+		@Column(name = "USERNAME")
+		private String username;
+	}
+
+	@Entity
+	public class Team{
+		@Id @GeneratedValue
+		@Column(name = "TEAM_ID")
+		private Long id;
+		private String name;
+
+		@OneToMany
+		@JoinColumn(name = "TEAM_ID") 
+		private List<Member> members = new ArrayList<>();	
+	}
+    ```
+    - 1쪽에서 외래키를 관리하기때문에 team에서 외래키를 관리함.     
+    - 데이터베이스 설계상 항상 다(N)쪽에 외래키가 존재함.       
+    - 객체와 테이블의 차이 때문에 반대편 테이블의 외래키를 관리하는 특이한 구조.     
+    - @JoinColumn을 사용하지 않으면 조인 테이블 방식을 사용함(중간에 테이블을 추가하는 방식)    
+    > 단점   
+        - 엔티티가 관리하는 외래키가 다른 테이블에 있음.    
+        - 연관관계 관리를 위해 추가로 update sql실행    
+    - <b>다대일 양방향 매핑을 사용하자</b>      
+    
+- 일대다(1:N) 양방향 연관관계   
+    - 이런 매핑은 공식적으로 존재하지않음.
+    - 다대일 양방향 연관관계를 사용하자.      
+
+- 일대일(1:1) 양방향 연관관계       
+    - 주 테이블이나 대상 테이블 중에 외래키 선택 가능
+        - 주 테이블에 외래키        
+            ![11_1](https://user-images.githubusercontent.com/59528611/218453365-2dc8d958-ea09-48a9-90f2-ca4bcece7da0.jpeg)     
+            ```java
+            @Entity
+            public class Member{
+                @Id @GeneratedValue
+                @Column(name = "MEMBER_ID")
+                private Long id;
+
+                @Column(name = "USERNAME")
+                private String username;
+
+                @OneToOne
+                @JoinColumn(name = "LOCKER_ID")
+                private Locker locker;
+            }
+
+            @Entity
+            public class Locker{
+                @Id @GeneratedValue
+                @Column(name = "LOCKER_ID")
+                private Long id;
+
+                @Column(name = "LOCKERNAME")
+                private String username;		
+
+                @OneToOne(mappedBy = "locker")
+                private Member member;
+            }
+            ```     
+            - 외래키가 있는 곳이 연관관계 주인. 반대편은 mappedBy 사용.
+            - 주 객체가 대상 객체의 참조를 가지는 것 처럼 주 테이블에 외래키를 두고 대상 테이블을 찾음.     
+            - 주 테이블만 조회해도 대상 테이블에 데이터가 있는지 확인 가능.     
+            - 값이 없으면 외래 키에 null 허용
+        - 대상 테이블에 외래키            
+            ![11_2](https://user-images.githubusercontent.com/59528611/218453488-1e4655ab-245f-43a1-a89a-8d3427a3e33b.jpeg)     
+            ```java
+            @Entity
+            public class Member{
+                @Id @GeneratedValue
+                @Column(name = "MEMBER_ID")
+                private Long id;
+
+                @Column(name = "USERNAME")
+                private String username;
+
+                @OneToOne(mappedBy = "member")
+                private Locker locker;
+            }
+
+            @Entity
+            public class Locker{
+                @Id @GeneratedValue
+                @Column(name = "LOCKER_ID")
+                private Long id;
+
+                @Column(name = "LOCKERNAME")
+                private String username;		
+
+                @OneToOne
+                @JoinColumn(name = "MEMBER_ID")
+                private Member member;
+            }
+            ```
+            > 주 테이블에 외래키가 있는 상황에서 연관관계 주인만 바꾸면 됨.     
+            - 대상 테이블에 외래키가 존재       
+            - 주 테이블과 대상 테이블을 일대일에서 일대다 관계로 변경할 때 테이블 구조 유지 가능        
+            - 프록시 기능의 한계로 지연 로딩으로 설정해도 항상 즉시 로딩됨.     
+- 다대다(N:M) 양방향 연관관계        
+    - 관계형 데이터베이스는 정규화된 테이블 2개로 다대다 관계를 표현할 수 없음.     
+    - 연결 테이블을 추가해서 일대다, 다대일 관계로 풀어야됨.        
+    ![NM_1](https://user-images.githubusercontent.com/59528611/218476175-619d283f-29fd-4017-b812-e182700e64f3.jpeg)     
+    - 객체는 컬렉션을 사용해서 객체 2개로 다대다 가능       
+    ![NM_2](https://user-images.githubusercontent.com/59528611/218498094-8abeb410-c092-4942-818f-4e27c703a075.jpeg)     
+    - @ManyToMany 사용, @JoinTable로 연결 테이블 지정.      
+    - 편리해 보이지만 실무에서 사용X    
+    - 다대다 한계 극복      
+        - 연결 테이블용 엔티티 추가(연결 테이블을 엔티티로 승격함)      
+        - @ManyToMany -> @OneToMany, @ManyToOne     
+        ![NM_3](https://user-images.githubusercontent.com/59528611/218498676-dbe7f1d8-9804-421b-abc3-b076063643ee.jpeg)     
+
+___     
+## 상속관계     
+- 상속관계 매핑     
+    - 관계형 데이터베이스는 상속 관계 X     
+    - 슈퍼타입 서브타입이라는 모델링 기법이 상속관계와 유사     
+        - 테이블의 논리 모델, 물리 모델 구현        
+            1. 조인 전략    
+            ![join_st](https://user-images.githubusercontent.com/59528611/219011535-4c719b4b-c9d7-46a7-be16-4ea98f882cc9.jpeg)      
+            2. 단일 테이블 전략     
+            ![singleTable_st](https://user-images.githubusercontent.com/59528611/219011754-5c7183d8-a6a2-4d99-8d9f-45cedcf47477.jpeg)       
+            3. 구현 클래스마다 테이블 전략      
+            ![tablePer_st](https://user-images.githubusercontent.com/59528611/219011961-87eb5eb2-c1b3-403e-b9cf-bddc4b4506ba.jpeg)
+            ```java     
+            @Entity
+            @Inheritance(strategy = InheritanceType.JOINED)//디폴트값은 SINGLE_TABLE
+            @DiscriminatorColumn // 컬럼에 서브타입 타입용 컬럼 추가
+            public class Item{
+                @Id	@GeneratedValue
+                private Long id;				
+
+                private String name;
+                private int price;
+            }
+
+            @Entity
+            @DiscriminatorValue("Ab") // 슈퍼타입 테이블의 컬럼에 등록될 이름
+            public class Album extends Item{
+                private String artist;
+            }
+
+            @Entity
+            public class Movie extends Item{
+                private String director;
+                private String actor;
+            }
+
+            @Entity
+            public class Book extends Item{
+                private String author;
+                private String isbn;
+            }
+            ```     
+    1. <b>조인 전략</b>    
+        - 장점      
+            - 테이블이 정규화 되어있음      
+            - 외래키 참조 무결성 제약조건 활용 가능     
+            - 저장공간 효율화됨
+        - 단점      
+            - 조회시 조인을 많이 사용함. 성능 저하 가능성     
+            - <b>조회 쿼리가 복잡함</b>     
+            - 데이터 저장시 isert sql이 여러번(상속 관계만큼) 호출      
+    2. <b>단일 테이블 전략</b>     
+        - 장점      
+            - 조인이 필요 없음. 조회 성능 빠름      
+            - 조회 쿼리가 단순함        
+        - 단점      
+            - 자식 엔티티가 매핑한 칼럼은 모두 null을 허용해야 함       
+            - 단일 테이블에 모든 것을 저장하므로 테이블이 커질 수 있음      
+    3. 구현 클래스마다 테이블 전략      
+    이 전략은 추천 X    
+        - 장점      
+            - 서브 타입을 명확하게 구분할 때 효과적     
+        - 단점  
+            - 여러 테이블을 조회시 성능이 느림(union)   
+            - 자식 테이블을 통합해서 쿼리하기 어려움        
+    - <b> 조인 전략과 단일 테이블 전략 둘 중 고민해서 사용하자</b>       
+
+- MappedSuperClass      
+공통 매핑 정보가 필요할 떄 사용
+```java     
+    @MappedSuperclass
+	public abstract class BaseEntity{
+		private LocalDateTime createDate;
+		private LocalDateTime lastModifiedDate;
+	}
+
+	@Entity
+	public class Member extends BaseEntity{
+		@Id @GeneratedValue
+		private Long id;
+	}
+
+	@Entity
+	public class Team extends BaseEntity{
+		@Id @GeneratedValue
+		private Long id;
+	}
+```     
+- 상속 관계 X, 엔티티 X, 테이블과 매핑 X        
+- 상속받는 자식 클래스에 매핑 정보만 제공       
+- 조회, 검색 불가능     
+- 직접 사용할 일이 없으므로 <b>추상 클래스 권장</b>     
+
+___     
+## 프록시   
+EntityManager.find() vs EntityManager.getReference()    
+- find(): 실제 엔티티 조회   
+- getReference(): 가짜(프록시) 엔티티 객체 조회     
+```java     
+main(){
+    Member member = new Member();
+    entityManager.persist(member);
+
+    entityManager.flush();
+    entityManager.clear();
+
+    Member findMember = entityManager.getReference(Member.class, member.getId());   
+    // select 쿼리가 나가지 않음
+
+    System.out.println("findMember.username = " + findMember.getUsername());
+    // 엔티티를 사용할 때 쿼리가 나감
+}
+```     
+특징    
+    - 프록시 객체는 실제 객체의 참조(target)을 보관     
+    - <b>프록시 객체는 처음 사용할 때 한번만 초기화</b>     
+    - <b>프록시 객체가 실제 엔티티로 바뀌는 것이 아닌 프록시 객체를 통해 실제 엔티티에 접근</b>     
+    - 프록시 객체는 원본 엔티티를 상속받음. 타입 체크시 주의 ( == 비교 실패, instanceof를 사용해라)   
+    - 프록시 객체를 호출하면 프록시 객체는 실제 객체의 메소드 호출      
+    - 영속성 컨텍스트에 찾는 엔티티가 이미 있으면 getReference를 호출해도 실제 엔티티를 반환        
+    - <b>준영속 상태일 때 프록시를 초기화하면 문제 발생( LazyInitializationException 발생 )</b>       
+
+프록시 확인     
+```java     
+main(){
+    Member findMember = entityManager.find(Member.class, member.getId());
+    System.out.println("findMember = " + findMember.getClass());
+    // findMember = class ...Member
+}
+```     
+```java     
+main(){
+    Member findMember = entityManager.getReferenece(Member.class, member.getId());
+    System.out.println("findMember = " + findMember.getClass());
+    // findMember = class ...Member$HibernateProxy$xxxx
+}
+```     
+- 프록시 인스턴스 초기화 여부 확인: PersistenceUnitUtill.isLoaded(entity)       
+- 프록시 클래스 확인: entity.getClass()     
+- 프록시 강제 초기화: Hibernate.initialize(entity)      
+
+## 즉시 로딩과 지연 로딩    
+Member와 Member의 Team을 동시에 조회해와야 할까?    
+- 지연로딩     
+    ```java     
+    @Entity
+	public class Member{
+		@Id @GeneratedValue
+		private Long id;
+
+		private String name;
+
+		@ManyToOne(fetch = FetchType.LAZY) // LAZY = 지연로딩
+		@JoinColumn(name = "TEAM_ID")
+		private Team team;
+	}
+
+	main(){
+		Member findMember = entityManager.find(Member.class, memberId);
+									// team관련 쿼리가 나가지않음
+
+		System.out.println("team = " + findMember.getTeam().getClass());
+	}
+    ```     
+    > team = class ...Team$HibernateProxy$xxx   
+    
+    프록시로 조회됨     
+    ```java     
+    main(){
+		Member findMember = entityManager.find(Member.class, memberId);
+
+		System.out.println("team = " + findMember.getTeam().getClass());
+
+		System.out.println("======");
+		String name = findMember.getTeam.getName(); // team을 사용할 때 team을 초기화(조회) 함
+		System.out.println("======");
+	}
+    ```
+- 즉시 로딩     
+    ```java     
+    @Entity
+	public class Member{
+		@Id @GeneratedValue
+		private Long id;
+
+		private String name;
+
+		@ManyToOne(fetch = FetchType.EAGER) // EAGER = 즉시 로딩
+		@JoinColumn(name = "TEAM_ID")
+		private Team team;
+	}
+
+	main(){
+		Member findMember = entityManager.find(Member.class, memberId);// member와 team을 join해서 조회     
+
+		System.out.println("team = " + findMember.getTeam().getClass());
+	}
+    ```     
+    > team = class ...Team      
+
+    Team 클래스로 조회됨. 프록시 X
+
+- 프록시와 즉시로딩 주의    
+    - <b>되도록 지연로딩만 사용해라</b>     
+    - 즉시 로딩은 예상하지 못한 sql이 발생함        
+    - <b>즉시 로디은 JPQL에서 N+1문제*를 일으킨다</b>       
+    - <b>@ManyToOne, @OneToOne은 즉시 로딩이 기본값. LAZY로 변경해라</b>        
+    - @OneToMany, ManyToMany는 지연로딩이 기본값    
+
+    N+1 문제
+    ```java     
+    main(){
+		List<Member> members = entityManager.createQuery("select m 
+		from Member m", Member.class).getResultList();
+	}
+    ```
+    > select member ~, select team ~    
+
+    Member쿼리와 Team쿼리 총 2개의 쿼리가 나감.
+    - JPQL "select m from Member m" -> SQL로 번역 -> "select * from Member"쿼리가 나감      
+    - 조회한 Member에 Team이 즉시 로딩으로 설정되어있어 Team을 다시 조회함
+---
+### 영속성 전이 CASCADE
+특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들고 싶을 때       
+ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
+```java     
+@Entity
+	public class Parent{
+		@Id @GeneratedValue
+		private Long id;
+
+		private String name;
+
+		@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL) //cascade
+		private List<Child> childList = new ArrayList<>();
+
+		public void addChild(Child child){
+			childList.add(child);
+			child.setParent(this);
+		}
+	}
+
+	@Entity
+	public class Child extends Parent{
+		@Id @GeneratedValue
+		private Long id;
+
+		private String name;
+
+		@ManyToOne
+		@JoinColumn(name = "parent_id")
+		private Parent parent;
+	}
+
+	main(){
+		Child child1 = new Child();
+		Child child2 = new Child();
+
+		Parent parent = new Parent();
+		Parent.addChild(child1);
+		Parent.addChild(child2);
+
+		//entityManager.persist(child1); // parent가 cascade all이여서 child도 영속 상태가 됨
+		//entityManager.persist(child2);
+		entityManager.persist(parent);
+	}
+```     
+- <b>참조하는 곳이 하나일 때 사용해라(특정 엔티티가 개인 소유할 때)</b>     
+- 영속성 전이는 연관관계 매핑과 아무 관련없음       
+- 엔티티를 영속화할 떄 연관된 엔티티도 함꼐 영속화하는 편리함을 제공할 뿐       
+
+---
+### 고아 객체
+- 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제   
+- orphanRemoval = true
+```java
+@Entity
+	public class Parent{
+		@Id @GeneratedValue
+		private Long id;
+
+		private String name;
+		@OneToMany(mappedBy = "parent", orphanRemoval = true)
+		private List<Child> childList = new ArrayList<>();
+	}
+```     
+
+- parent.getChildList().remove(n) // 자식 엔티티를 컬렉션에서 제거      
+- delete from child where ~ // delete 쿼리가 나감       
+
+주의    
+- <b>참조하는 곳이 하나일 때 사용해라(특정 엔티티가 개인 소유할 때)</b>     
+- @OneToOne, @OneToMany만 가능  
+- 부모엔티티를 제거하면 자식엔티티는 고아가 된다. cascadeType.REMOVE 처럼 동작      
+
+## 영속성 전이 + 고아 객체, 생명주기    
+- CascadeType.All + orphanRemoval=true      
+- 스스로 생명주기를 관리하는 엔티티는 EntityManager로 직접 영속화(persist), 제거(remove)함      
+- <b>두 옵션을 모두 활성화 하면 부모 엔티티를 통해서 자식 엔티티의 생명 주기를 관리함(EntityManager를 통하지 않음)</b>      
+- 도메인 주도 설계의(DDD) Aggregate Root 개념을 구현할 때 유용
