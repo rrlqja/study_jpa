@@ -45,6 +45,8 @@ main(){
 - 프록시 클래스 확인: entity.getClass()     
 - 프록시 강제 초기화: Hibernate.initialize(entity)      
 
+<br><br>
+
 ## 즉시 로딩과 지연 로딩    
 Member와 Member의 Team을 동시에 조회해와야 할까?    
 - 지연로딩     
@@ -198,6 +200,8 @@ ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
 - <b>참조하는 곳이 하나일 때 사용해라(특정 엔티티가 개인 소유할 때)</b>     
 - @OneToOne, @OneToMany만 가능  
 - 부모엔티티를 제거하면 자식엔티티는 고아가 된다. cascadeType.REMOVE 처럼 동작      
+
+<br><br>
 
 ## 영속성 전이 + 고아 객체, 생명주기    
 - CascadeType.All + orphanRemoval=true      

@@ -7,6 +7,8 @@
 - 다중성(multiplicity): 다대일(N:1), 일대다(1:N), 일대일(1:1), 다대다(N:M)  
 - 연관관계 주인(owner): 객체 양방향 연관관계는 관리 주인이 필요함.       
 
+<br><br>
+
 ## 단방향 연관관계  
 Member -> Team  
 ```java
@@ -51,6 +53,8 @@ public static void main(String[] args){
     Team findTeam = findMember.getTeam()// team 값 가져올 수 있음
 }
 ```     
+
+<br><br>
 
 ## 양방향 연관관계      
 > 데이터베이스 테이블은 외래키를 통해 연관된 테이블을 모두 조회 가능.   
@@ -114,6 +118,8 @@ public class Team{
             }
             ```     
         3. 양방향 매핑시 무한 루프를 조심하자 ex) toString()     
+
+<br><br>
 
 ## 양방향 매핑 정리     
 - 단방향 매핑만으로 연관관계 매핑을 완료해라    
