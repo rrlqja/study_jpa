@@ -207,4 +207,4 @@ ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
 - CascadeType.All + orphanRemoval=true      
 - 스스로 생명주기를 관리하는 엔티티는 EntityManager로 직접 영속화(persist), 제거(remove)함      
 - <b>두 옵션을 모두 활성화 하면 부모 엔티티를 통해서 자식 엔티티의 생명 주기를 관리함(EntityManager를 통하지 않음)</b>      
-- 도메인 주도 설계의(DDD) Aggregate Root 개념을 구현할 때 유용
+- 도메인 주도 설계의(DDD) Aggregate Root 개념을 구현할 때 유용		

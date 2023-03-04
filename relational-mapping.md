@@ -166,4 +166,3 @@
         - 연결 테이블용 엔티티 추가(연결 테이블을 엔티티로 승격함)      
         - @ManyToMany -> @OneToMany, @ManyToOne     
         ![NM_3](https://user-images.githubusercontent.com/59528611/218498676-dbe7f1d8-9804-421b-abc3-b076063643ee.jpeg)     
-

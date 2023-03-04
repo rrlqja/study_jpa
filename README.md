@@ -1,4 +1,5 @@
-### [jpa](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)     
+### jpa     
+- [JPA(Java Persistence Api)](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)       
 - [영속성 컨텍스트(Persistence Context)](#영속성-컨텍스트-persistence-context) - [링크](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)       
     - 엔티티의 생명주기     
     - 영속성 컨텍스트의 이점        
@@ -20,10 +21,55 @@
     - 영속성 전이 + 고아 객체 - 생명주기
 
 ___     
+
+## JPA - Java Persistence Api  
+Java Orm 표준  
+Java Application과 JDBC 중간에서 동작한다.  
+> __Orm__ (Object Relational Mapping)  
+객체 관계 매핑  
+객체는 객체대로 관계형DB는 관계형DB대로 설계, Orm 프레임워크가 중간에서 매핑  
+
+<br><br>   
+
+## Jpa 사용 이유   
+* sql 중심적 개발에서 객체 중심 개발 가능   
+* 패러다임의 불일치 해결    
+
+<br><br>   
+
+## 패러다임의 불일치   
+객체지향 프로그래밍의 경우 추상화, 캡슐화, 상속, 다형성 등 다양한 객체 제어 방법이 존재하지만 관계형 데이터베이스에는 존재하지않는다.     
+jpa는 이러한 패러다임의 불일치를 해결할 수 있다.    
+
+* ### jpa 상속  
+    객체는 상속이 있지만 관계형 데이터베이스는 상속개념이 없다. 상속관계의 객체를 테이블에 저장, 조회하려면 관련 쿼리 여러개를 보내야한다. jpa는 이를 알아서 처리해줌.    
+
+* ### jpa 연관관계, 객체 그래프 탐색    
+    객체는 참조값을 이용하여, 테이블은 외래키 값을 이용하여 관련 객체, 테이블을 조회함.     
+jpa는 <b>entity의 필드에 다른 entity의 참조값을 저장</b>하여 연관관계매핑이 가능하다.  
+
+* ### jpa 비교  
+    동일한 트랜잭션에서 조회한 entity는 같음(== 비교)을 보장함.    
+* ### jpa 성능 최적화   
+    #### 1. 1차 채시와 동일성 보장   
+    >같은 트랜잭션 안에서느 같은 entity를 반환.  
+    DB Islocation Level이 Read Commit이어도 애플리케이션 Repeatable Read 보장.      
+    #### 2. 트랜잭션을 지원하는 쓰기 지연    
+    >트랜잭션을 커밋할때까지 Insert Sql을 모아놓음.  
+    Jdbc Batch Sql 기능을 이용하여 한번에 sql을 전송함.     
+    #### 3. 지연 로딩과 즉시 로딩    
+    >지연 로딩: 객체가 실제 사용될 때 로딩   
+    즉시 로딩: join sql로 한번에 연관된 객체를 미리 조회    
+
+
+___     
+
 ## 영속성 컨텍스트 (Persistence Context)    
 - 엔티티(entity)를 영구 저장하는 환경   
 - 눈에 보이지 않는 논리적인 개념    
 - 엔티티 매니저(entity manager)를 통해 영속성 컨텍스트에 접근   
+
+<br><br>
 
 ### 엔티티의 생명주기   
 - <b>비영속(new/transient)</b>: 영속성 컨텍스트와 전혀 관계가 없는 상태, 새로운 객체를 생성만 한 상태    
@@ -36,6 +82,8 @@ ___
     ```java     
     entitymanger.remove(entity);    
     ```     
+
+<br><br>
 
 ### 영속성 컨텍스트의 이점  
 - <b>1차 캐시</b>  
@@ -73,6 +121,8 @@ ___
     
 - <b>지연 로딩(lazy loading)</b>   
 
+<br><br>
+
 ### 플러시(flush)    
 - <b>영속성 컨텍스트의 변경 내용을 데이터베이스에 반영.</b>    
 - <b>플러시 발생시: 변경 감지, 수정된 엔티티를 쓰기 지연 sql 저장소에 저장. 쓰기 지연 sql 저장소의 쿼리를 데이터베이스에 전송.</b>     
@@ -89,6 +139,7 @@ ___
     entitymanager.createQuery(query)//멤버 엔티티가 저장이 안된 상태에서 쿼리를 보내면 원치않는 결과가 나올 수 있음.
                                     //이러한 결과를 방지하고자 jpql 실행시 플러시가 자동으로 호출됨.
     ```     
+<br><br>
 
 ### 준영속 상태     
 - 영속 상태의 엔티티가 영속성 컨텍스트에서 분리된 상태.   
@@ -98,7 +149,9 @@ ___
     2. entitymanger.clear() - 영속성 컨텍스트를 완전 초기화 
     3. entitymanger.close() - 영속성 컨텍스트를 종료    
 
+
 ___     
+
 ## 엔티티 매핑  
 객체와 테이블 매핑    
 - 객체와 테이블 매핑: <b>@Entity, @Table</b>   
@@ -157,9 +210,10 @@ ___
                 private Long id;
             }
             ```
-- 연관관계 매핑: @ManyToOne, @JoinColumn        
+- 연관관계 매핑: @ManyToOne, @JoinColumn    
 
-___     
+___         
+
 ## 연관관계 매핑 기초   
 - 객체와 테이블의 연관관계의 차이   
     1. 테이블은 외래키를 조인하여 연관된 테이블을 찾는다.   
@@ -168,6 +222,8 @@ ___
 - 방향(direction): 단방향, 양방향   
 - 다중성(multiplicity): 다대일(N:1), 일대다(1:N), 일대일(1:1), 다대다(N:M)  
 - 연관관계 주인(owner): 객체 양방향 연관관계는 관리 주인이 필요함.       
+
+<br><br>
 
 ## 단방향 연관관계  
 Member -> Team  
@@ -213,6 +269,8 @@ public static void main(String[] args){
     Team findTeam = findMember.getTeam()// team 값 가져올 수 있음
 }
 ```     
+
+<br><br>
 
 ## 양방향 연관관계      
 > 데이터베이스 테이블은 외래키를 통해 연관된 테이블을 모두 조회 가능.   
@@ -277,12 +335,15 @@ public class Team{
             ```     
         3. 양방향 매핑시 무한 루프를 조심하자 ex) toString()     
 
+<br><br>
+
 ## 양방향 매핑 정리     
 - 단방향 매핑만으로 연관관계 매핑을 완료해라    
-- 양방향 매핑은 조회(객체 그래프 탐색) 기능이 추가되는 것 뿐
-- 단방향 매핑을 잘 하고 양방향 매핑은 필요할 때 추가해라        
+- 양방향 매핑은 조회(객체 그래프 탐색) 기능이 추가되는 것 뿐        
+- 단방향 매핑을 잘 하고 양방향 매핑은 필요할 때 추가해라    
 
-___     
+___             
+
 ## 다양한 연관관계 매핑     
 - 고려사항      
     1. 다중성   
@@ -452,7 +513,8 @@ ___
         - @ManyToMany -> @OneToMany, @ManyToOne     
         ![NM_3](https://user-images.githubusercontent.com/59528611/218498676-dbe7f1d8-9804-421b-abc3-b076063643ee.jpeg)     
 
-___     
+___         
+
 ## 상속관계     
 - 상속관계 매핑     
     - 관계형 데이터베이스는 상속 관계 X     
@@ -545,7 +607,8 @@ ___
 - 조회, 검색 불가능     
 - 직접 사용할 일이 없으므로 <b>추상 클래스 권장</b>     
 
-___     
+___         
+
 ## 프록시   
 EntityManager.find() vs EntityManager.getReference()    
 - find(): 실제 엔티티 조회   
@@ -592,6 +655,8 @@ main(){
 - 프록시 인스턴스 초기화 여부 확인: PersistenceUnitUtill.isLoaded(entity)       
 - 프록시 클래스 확인: entity.getClass()     
 - 프록시 강제 초기화: Hibernate.initialize(entity)      
+
+<br><br>
 
 ## 즉시 로딩과 지연 로딩    
 Member와 Member의 Team을 동시에 조회해와야 할까?    
@@ -747,8 +812,10 @@ ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
 - @OneToOne, @OneToMany만 가능  
 - 부모엔티티를 제거하면 자식엔티티는 고아가 된다. cascadeType.REMOVE 처럼 동작      
 
+<br><br>
+
 ## 영속성 전이 + 고아 객체, 생명주기    
 - CascadeType.All + orphanRemoval=true      
 - 스스로 생명주기를 관리하는 엔티티는 EntityManager로 직접 영속화(persist), 제거(remove)함      
 - <b>두 옵션을 모두 활성화 하면 부모 엔티티를 통해서 자식 엔티티의 생명 주기를 관리함(EntityManager를 통하지 않음)</b>      
-- 도메인 주도 설계의(DDD) Aggregate Root 개념을 구현할 때 유용
+- 도메인 주도 설계의(DDD) Aggregate Root 개념을 구현할 때 유용		
