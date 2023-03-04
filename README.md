@@ -1,5 +1,5 @@
 ### jpa     
-- [JPA(Java Persistence Api)](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)       
+- [JPA(Java Persistence Api)](#jpa) - [링크](https://github.com/rrlqja/study_jpa/blob/master/jpa.md)       
 - [영속성 컨텍스트(Persistence Context)](#영속성-컨텍스트-persistence-context) - [링크](https://github.com/rrlqja/study_jpa/blob/master/persistence-context.md)       
     - 엔티티의 생명주기     
     - 영속성 컨텍스트의 이점        
